@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dev4Fun 👾 Full Stack Lab</title>
+  <link rel="icon" type="image/png" href="assets/LOGO-LETRA-PRETA.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;0,900;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: #F4F4F0;
+      color: #000;
+      font-family: 'Inter', sans-serif;
+    }
+    ::selection { background: #FF2A2A; color: #fff; }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      opacity: 0.015;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* === HEADER === */
+    header {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 50;
+      background: #F4F4F0;
+    }
+    .nav-link {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.35);
+      text-decoration: none;
+      transition: color 0.2s;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .nav-link:hover, .nav-link.active { color: #000; }
+    .nav-link.active { font-weight: 700; }
+    .nav-desktop { display: flex; align-items: center; gap: 2rem; }
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: rgba(0,0,0,0.4);
+      padding: 4px 8px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .hamburger:hover { color: #000; }
+    @media (max-width: 639px) {
+      .hamburger { display: block; }
+      .nav-desktop {
+        display: none;
+        position: fixed;
+        top: 52px;
+        left: 0;
+        right: 0;
+        background: #F4F4F0;
+        flex-direction: column;
+        gap: 0;
+        padding: 8px 28px 12px;
+        border-bottom: 1px solid rgba(0,0,0,0.06);
+        z-index: 49;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+      }
+      .nav-desktop.open { display: flex; }
+      .nav-desktop .nav-link {
+        padding: 10px 0;
+        font-size: 0.8rem;
+        letter-spacing: 0.12em;
+        border-bottom: 1px solid rgba(0,0,0,0.04);
+      }
+      .nav-desktop .nav-link:last-child { border-bottom: none; }
+    }
+
+    .social-icon {
+      width: 28px; height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s;
+      color: rgba(0,0,0,0.25);
+    }
+    .social-icon:hover { color: #000; background: rgba(0,0,0,0.04); }
+    .social-icon svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .social-icon.discord svg { fill: currentColor; stroke: none; }
+
+    /* === MAIN SPLIT === */
+    main {
+      flex: 1;
+      display: flex;
+      min-height: 0;
+    }
+    .panel-left {
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 32px 44px 32px 52px;
+      overflow-y: auto;
+    }
+    .panel-right {
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* === LEFT PANEL === */
+    .kicker {
+      font-size: 0.55rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #FF2A2A;
+      margin-bottom: 0.6rem;
+      line-height: 1.4;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.02em;
+    }
+    .hero-sub {
+      font-size: clamp(0.65rem, 0.9vw, 0.85rem);
+      color: rgba(0,0,0,0.5);
+      line-height: 1.6;
+      max-width: 92%;
+      margin-bottom: 1.25rem;
+    }
+    .cta-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.6rem 1.6rem;
+      background: #000;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.7rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      align-self: flex-start;
+    }
+    .cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+
+    /* === ABOUT === */
+    .about-text {
+      font-size: clamp(0.55rem, 0.75vw, 0.75rem);
+      color: rgba(0,0,0,0.55);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      max-width: 95%;
+    }
+    .about-text strong { color: rgba(0,0,0,0.8); }
+    .skills-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+    .skill-pill {
+      background: rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 9999px;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.55rem;
+      font-weight: 500;
+      color: rgba(0,0,0,0.7);
+    }
+
+    /* === TIERS BALLOONS === */
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.45rem;
+    }
+    .tier-balloon {
+      background: rgba(0,0,0,0.02);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 10px;
+      padding: 0.6rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .tier-balloon:hover {
+      background: rgba(0,0,0,0.04);
+      border-color: rgba(0,0,0,0.12);
+      transform: translateY(-2px);
+    }
+    .tier-balloon-name {
+      font-weight: 700;
+      font-size: 0.7rem;
+      line-height: 1.2;
+    }
+    .tier-balloon-price {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: rgba(0,0,0,0.4);
+      margin-top: 0.1rem;
+    }
+
+    /* === SHOP GRID === */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+    }
+    .shop-card {
+      background: rgba(0,0,0,0.02);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 10px;
+      padding: 0.6rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .shop-card:hover { background: rgba(0,0,0,0.04); border-color: rgba(0,0,0,0.12); transform: translateY(-2px); }
+    .shop-card-icon { font-size: 1.4rem; margin-bottom: 0.2rem; }
+    .shop-card-name { font-size: 0.55rem; font-weight: 600; }
+    .shop-card-price { font-size: 0.5rem; color: rgba(0,0,0,0.35); }
+
+    /* === MACINTOSH 128k === */
+    .mac-wrapper {
+      transform: perspective(1000px) rotateY(-5deg) rotateX(2deg);
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      width: min(32vw, 380px);
+    }
+    .mac-wrapper:hover { transform: perspective(1000px) rotateY(-3deg) rotateX(1deg); }
+    .mac-stand-neck {
+      width: 38%; height: 18px;
+      background: linear-gradient(to bottom, #3a3a3a, #222);
+      margin: 0 auto -2px;
+      border-radius: 0 0 6px 6px;
+      clip-path: polygon(4% 0, 96% 0, 100% 100%, 0 100%);
+      border: 1px solid #444;
+      border-top: none;
+    }
+    .mac-stand-base {
+      width: 48%; height: 10px;
+      background: #222; margin: 0 auto;
+      border-radius: 0 0 4px 4px;
+      border: 1px solid #333;
+      border-top: none;
+    }
+    .mac-casing {
+      background: linear-gradient(155deg, #f2e8d8 0%, #dcccae 40%, #c9b896 100%);
+      border-radius: 30px 30px 14px 14px;
+      padding: 16px 16px 20px;
+      box-shadow: 25px 25px 80px rgba(0,0,0,0.12), -8px -8px 30px rgba(255,255,255,0.25), inset 0 1px 0 rgba(255,255,255,0.4), 0 0 0 1px rgba(180,160,130,0.3);
+      position: relative;
+    }
+    .mac-casing::before {
+      content: '';
+      position: absolute;
+      inset: 5px;
+      border-radius: 25px 25px 9px 9px;
+      border: 1px solid rgba(255,255,255,0.08);
+      pointer-events: none;
+    }
+    .mac-bezel {
+      background: #111;
+      border-radius: 8px;
+      padding: 4px;
+      box-shadow: inset 0 0 25px rgba(0,0,0,0.7);
+      border: 1.5px solid #2a2a2a;
+      aspect-ratio: 4 / 3;
+    }
+    .mac-screen {
+      background: #000;
+      border-radius: 4px;
+      width: 100%; height: 100%;
+      position: relative;
+      overflow: hidden;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .mac-screen::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px);
+      pointer-events: none; z-index: 2;
+    }
+    .mac-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 60%, rgba(0,255,65,0.015) 100%);
+      pointer-events: none; z-index: 1;
+    }
+    .terminal {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(0.45rem, 0.7vw, 0.65rem);
+      color: #00FF41;
+      line-height: 1.5;
+      position: relative;
+      z-index: 3;
+      text-shadow: 0 0 6px rgba(0,255,65,0.1);
+      overflow: hidden;
+      max-height: 100%;
+    }
+    .terminal-line { white-space: pre-wrap; word-break: break-word; }
+    .terminal-cursor::after { content: '█'; animation: blink 0.8s step-end infinite; color: #00FF41; }
+    @keyframes blink { 0%,49% { opacity:1; } 50%,100% { opacity:0; } }
+
+    .mac-chin {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 4px 0;
+    }
+    .mac-floppy { width:44px; height:7px; background:#444; border-radius:2px; border:1px solid #666; position:relative; }
+    .mac-floppy::after { content:''; position:absolute; right:-6px; top:50%; transform:translateY(-50%); width:3px; height:3px; background:#333; border-radius:50%; }
+    .mac-brand { font-family:'JetBrains Mono',monospace; font-size:0.4rem; letter-spacing:0.05em; color:rgba(100,80,60,0.4); }
+    .mac-power { width:5px; height:5px; border-radius:50%; background:#00ff44; box-shadow:0 0 5px rgba(0,255,68,0.4); }
+
+    /* === DIVIDER + MARQUEE === */
+    .divider-line { height:1px; background:rgba(0,0,0,0.08); flex-shrink:0; }
+    .marquee-section { height:64px; display:flex; align-items:center; overflow:hidden; flex-shrink:0; border-top:1px solid rgba(0,0,0,0.04); }
+    .marquee-track { display:flex; flex-wrap:nowrap; width:200%; will-change:transform; animation:marquee 30s linear infinite; }
+    .marquee-section:hover .marquee-track { animation-play-state:paused; }
+    .marquee-content { display:flex; gap:2.5rem; align-items:center; flex-shrink:0; padding-right:2.5rem; }
+    @keyframes marquee { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+    .marquee-content img { height:22px; width:auto; opacity:0.7; filter:brightness(0.6); transition:all 0.3s ease; }
+    .marquee-content a:hover img { opacity:1; filter:brightness(1); }
+    .marquee-fallback { font-family:'JetBrains Mono',monospace; font-size:0.55rem; color:rgba(0,0,0,0.15); }
+
+    /* === FOOTER === */
+    .site-footer {
+      height: 28px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      flex-shrink: 0;
+      font-size: 0.4rem;
+      color: rgba(255,255,255,0.3);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+    .site-footer a { color:rgba(255,255,255,0.3); text-decoration:none; transition:color 0.2s; }
+    .site-footer a:hover { color:rgba(255,255,255,0.6); }
+
+    /* === MODAL === */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 1.5rem;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+      transform: scale(0.92) translateY(12px);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .modal-overlay.open .modal-card { transform: scale(1) translateY(0); }
+    .modal-card--giant {
+      max-width: 900px !important;
+      width: 92% !important;
+      max-height: 85vh !important;
+      padding: 2rem !important;
+    }
+    .modal-close-btn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 1.5rem;
+      color: rgba(0,0,0,0.15);
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: color 0.2s;
+      line-height: 1;
+      z-index: 2;
+    }
+    .modal-close-btn:hover { color: #000; }
+    .modal-label { font-size:0.5rem; text-transform:uppercase; letter-spacing:0.1em; color:rgba(0,0,0,0.25); margin-bottom:0.15rem; }
+    .modal-value { font-size:0.7rem; color:rgba(0,0,0,0.75); margin-bottom:0.5rem; }
+    .modal-value:last-of-type { margin-bottom:1rem; }
+    .var-btn {
+      padding: 0.35rem 1rem;
+      border-radius: 9999px;
+      border: 1.5px solid rgba(0,0,0,0.1);
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .var-btn.active { border-color:#000; background:#000; color:#fff; }
+    .buy-btn {
+      padding: 0.6rem 1.5rem;
+      background: #FF2A2A;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.8rem;
+      border-radius: 9999px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: inline-block;
+      text-decoration: none;
+    }
+    .buy-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(255,42,42,0.25); }
+    .buy-btn--giant {
+      padding: 0.85rem 2rem;
+      font-size: 0.95rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 900px) {
+      header { padding: 0 20px; }
+      .panel-left { padding: 28px 24px; }
+      .hero-title { font-size: clamp(1.4rem, 4vw, 2.2rem); }
+    }
+    @media (max-width: 768px) {
+      html, body { overflow: visible; height: auto; }
+      body { min-height: 100vh; overflow-y: auto; }
+      .panel-left, .panel-right { width: 100%; }
+      main { flex-direction: column; }
+      .panel-left { padding: 2.5rem 20px 3.5rem; overflow-y:visible; justify-content:flex-start; }
+      .panel-right { padding: 12px 20px 0; margin-bottom: 3rem; }
+      .mac-wrapper { width: min(50vw, 200px) !important; transform: none !important; }
+      .mac-casing { padding: 10px 10px 14px; border-radius: 20px 20px 10px 10px; }
+      .mac-bezel { padding: 3px; }
+      .mac-screen { padding: 6px 8px; }
+      .terminal { font-size: clamp(0.4rem, 1.2vw, 0.55rem); }
+      .mac-chin { padding: 4px 2px 0; }
+      .mac-floppy { width: 30px; height: 5px; }
+      .mac-brand { font-size: 0.3rem; }
+      .mac-power { width: 4px; height: 4px; }
+      .site-footer { padding: 0 16px; font-size:0.35rem; }
+      .marquee-section { height: 52px; }
+      .tiers-grid { grid-template-columns: repeat(2, 1fr); gap: 0.35rem; }
+      .shop-grid { grid-template-columns: repeat(3, 1fr); gap: 0.35rem; }
+      .modal-card--giant { padding: 1.25rem !important; }
+    }
+    @media (max-width: 500px) {
+      .nav-link { font-size:0.5rem; letter-spacing:0.1em; }
+      .nav-desktop .nav-link { font-size:0.8rem; }
+      header { padding: 0 12px; gap: 4px; }
+      .panel-left { padding: 1.5rem 14px 2rem; }
+      .hero-title { font-size: 1.3rem; }
+      .kicker { font-size:0.45rem; }
+      .tiers-grid { grid-template-columns: repeat(2, 1fr); gap:0.25rem; }
+      .tier-balloon { padding: 0.45rem; }
+      .shop-grid { grid-template-columns: repeat(3, 1fr); gap:0.25rem; }
+      .social-icon { width:24px; height:24px; }
+      .social-icon svg { width:12px; height:12px; }
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen md:h-screen">
+
+  <!-- ===== HEADER ===== -->
+  <header>
+    <a href="#" class="flex items-center" onclick="switchState('home')" style="cursor:pointer;">
+      <img src="assets/LOGO-LETRA-PRETA.png" alt="Dev4Fun" class="h-6 sm:h-7 w-auto" style="mix-blend-mode: multiply;">
+    </a>
+    <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">☰</button>
+    <nav class="nav-desktop" id="main-nav">
+      <a class="nav-link active" data-state="home">Home</a>
+      <a class="nav-link" data-state="about">About</a>
+      <a class="nav-link" data-state="tiers">Tiers</a>
+      <a class="nav-link" data-state="shop">Shop</a>
+      <a class="nav-link" data-state="media4fun">Blog</a>
+      <a class="nav-link" data-state="contato">Contato</a>
+    </nav>
+    <div class="hidden md:flex items-center gap-1">
+      <a href="https://wa.me/5513996500270" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="WhatsApp">
+        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/dev4fun.online" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Instagram">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a href="https://www.snapchat.com/@dev4fun.online?sender_web_id=da8a5e99-baa7-4b8b-b4da-618f1930aeec&device_type=desktop&is_copy_url=true" target="_blank" rel="noopener noreferrer" class="social-icon" aria-label="Snapchat">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm4.5 14.2c-.3.3-.7.5-1.1.7-.1.1-.2.3-.1.4.1.3.3.6.4.9.1.2 0 .4-.2.5-.2.1-.5.1-.8.1-.8 0-1.6-.2-2.4-.4-.4-.1-.8-.1-1.2 0-.7.2-1.5.4-2.3.4-.3 0-.6 0-.8-.1-.2-.1-.3-.3-.2-.5.1-.3.3-.6.4-.9.1-.1 0-.3-.1-.4-.4-.2-.8-.4-1.1-.7-.4-.4-.4-1-.1-1.4.3-.3.7-.4 1-.2l.1.1c.2.2.5.3.8.4.2.1.5.1.7 0 .3-.1.5-.3.7-.5.2-.3.2-.7.1-1-.1-.3-.3-.5-.6-.7-.4-.2-.9-.4-1.3-.6-.3-.2-.6-.4-.8-.7-.5-.5-.7-1.2-.6-1.9.1-.7.5-1.3 1.1-1.6l.1-.1c-.1-.4-.1-.8-.1-1.2C9.5 7.7 10.7 6.5 12 6.5s2.5 1.2 2.5 2.7c0 .4 0 .8-.1 1.2 0 .1 0 .1.1.1.5.3 1 .9 1.1 1.6.1.7-.1 1.4-.6 1.9-.2.3-.5.5-.8.7-.4.2-.9.4-1.3.6-.2.1-.4.3-.5.5-.1.2-.2.5-.1.7 0 .2.2.4.4.5.2.1.5.1.7 0 .3-.1.6-.2.8-.4l.1-.1c.3-.2.7-.1 1 .2.3.3.3.9-.1 1.3z"/></svg>
+      </a>
+      <a href="https://www.dev4fun.online" target="_blank" rel="noopener noreferrer" class="social-icon discord" aria-label="Discord">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M20.3 4.5c-1.2-.6-2.5-1-3.8-1.3-.2 0-.3.1-.4.2-.2.3-.4.7-.5 1-1.5-.2-3-.2-4.5 0-.2-.3-.4-.7-.5-1-.1-.1-.2-.2-.4-.2-1.3.3-2.6.7-3.8 1.3h-.1c-2.4 3.5-3 7.4-2.7 11.1 0 .2.1.4.3.5 1.5 1.1 3.3 1.8 5.1 2.2.2.1.5 0 .6-.2.4-.5.7-1.1 1-1.7.1-.2 0-.5-.2-.6-.6-.2-1.1-.5-1.6-.8-.1-.1-.1-.2 0-.3.1-.1.2-.1.3 0 .1.1.2.1.3.2.5.3 1 .6 1.6.8.5.2 1.1.4 1.7.5.6.1 1.2.2 1.8.2s1.2-.1 1.8-.2c.6-.1 1.1-.3 1.7-.5.5-.2 1.1-.5 1.6-.8.1-.1.2-.1.3-.2.1.1.2.2 0 .3-.4.3-1 .6-1.6.8-.2.1-.3.3-.2.6.3.6.6 1.1 1 1.7.1.2.3.3.6.2 1.8-.4 3.6-1.1 5.1-2.2.2-.1.3-.3.3-.5.3-3.7-.4-7.6-2.8-11.1zM9 14c-.8 0-1.5-.7-1.5-1.5S8.2 11 9 11s1.5.7 1.5 1.5S9.8 14 9 14zm6 0c-.8 0-1.5-.7-1.5-1.5s.7-1.5 1.5-1.5 1.5.7 1.5 1.5S15.8 14 15 14z"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- ===== MAIN SPLIT ===== -->
+  <main>
+    <!-- LEFT PANEL (content) -->
+    <div class="panel-left" id="panel-left"></div>
+
+    <!-- RIGHT PANEL (Macintosh) -->
+    <div class="panel-right">
+      <div class="mac-wrapper">
+        <div class="mac-stand-neck"></div>
+        <div class="mac-stand-base"></div>
+        <div class="mac-casing">
+          <div class="mac-bezel">
+            <div class="mac-screen">
+              <div class="terminal" id="terminal"></div>
+            </div>
+          </div>
+          <div class="mac-chin">
+            <div class="mac-floppy"></div>
+            <span class="mac-brand">Macintosh 128k</span>
+            <div class="mac-power"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== DIVIDER + MARQUEE ===== -->
+  <div class="divider-line"></div>
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <a href="https://perfectpay.com.br/" target="_blank" rel="noopener noreferrer"><img src="parceiros/perfectpay-logo.png" alt="PerfectPay" loading="lazy"></a>
+        <a href="https://kirvano.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/kirvano-logo.svg" alt="Kirvano" loading="lazy"></a>
+        <a href="https://shopify.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/shopify-logo.svg" alt="Shopify" loading="lazy"></a>
+        <a href="https://github.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/github-logo.svg" alt="GitHub" loading="lazy"></a>
+        <a href="https://vercel.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/vercel-logo.svg" alt="Vercel" loading="lazy"></a>
+        <a href="https://nodejs.org/" target="_blank" rel="noopener noreferrer"><img src="parceiros/nodejs-logo.svg" alt="Node.js" loading="lazy"></a>
+        <a href="https://paypal.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/paypal-logo.svg" alt="PayPal" loading="lazy"></a>
+        <a href="https://vegacheckout.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/vegacheckout-logo.svg" alt="VegaCheckout" loading="lazy"></a>
+        <a href="https://inlead.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/inlead-logo.png" alt="Inlead" loading="lazy"></a>
+        <a href="https://opencode.ai/" target="_blank" rel="noopener noreferrer"><img src="parceiros/opencode-logo.svg" alt="OpenCode" loading="lazy"></a>
+      </div>
+      <div class="marquee-content" aria-hidden="true">
+        <a href="https://perfectpay.com.br/" target="_blank" rel="noopener noreferrer"><img src="parceiros/perfectpay-logo.png" alt="PerfectPay" loading="lazy"></a>
+        <a href="https://kirvano.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/kirvano-logo.svg" alt="Kirvano" loading="lazy"></a>
+        <a href="https://shopify.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/shopify-logo.svg" alt="Shopify" loading="lazy"></a>
+        <a href="https://github.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/github-logo.svg" alt="GitHub" loading="lazy"></a>
+        <a href="https://vercel.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/vercel-logo.svg" alt="Vercel" loading="lazy"></a>
+        <a href="https://nodejs.org/" target="_blank" rel="noopener noreferrer"><img src="parceiros/nodejs-logo.svg" alt="Node.js" loading="lazy"></a>
+        <a href="https://paypal.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/paypal-logo.svg" alt="PayPal" loading="lazy"></a>
+        <a href="https://vegacheckout.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/vegacheckout-logo.svg" alt="VegaCheckout" loading="lazy"></a>
+        <a href="https://inlead.com/" target="_blank" rel="noopener noreferrer"><img src="parceiros/inlead-logo.png" alt="Inlead" loading="lazy"></a>
+        <a href="https://opencode.ai/" target="_blank" rel="noopener noreferrer"><img src="parceiros/opencode-logo.svg" alt="OpenCode" loading="lazy"></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="flex items-center gap-4">
+      <a href="mailto:contato@dev4fun.online">contato@dev4fun.online</a>
+      <span style="opacity:0.15;">|</span>
+      <a href="https://www.dev4fun.online" target="_blank" rel="noopener noreferrer">dev4fun.online</a>
+    </div>
+    <div class="flex items-center gap-3">
+      <span>&copy; 2026 Dev4Fun</span>
+    </div>
+  </footer>
+
+  <!-- ===== UNIFIED MODAL ===== -->
+  <div class="modal-overlay" id="main-modal">
+    <div style="position:relative;">
+      <button class="modal-close-btn" onclick="closeModal()">&times;</button>
+      <div class="modal-card" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ===== SCRIPTS ===== -->
+  <script>
+    // ===== PRODUCT DATA (10 individual products) =====
+    const products = [
+      {
+        id: 'blitz-lp', name: 'Blitz LP', price: 'R$ 997',
+        target: 'Negócios locais e profissionais liberais',
+        arch: 'Web App One-Page',
+        tech: 'HTML5, Tailwind, GSAP, SEO Otimizado',
+        edge: 'Domínio e 1 E-mail profissional inclusos. Suporte direto via WhatsApp.',
+      },
+      {
+        id: 'sniper-lp', name: 'Sniper LP', price: 'R$ 1.997',
+        target: 'Infoprodutores e clínicas high-ticket',
+        arch: 'Landing Page de Alto Impacto',
+        tech: 'Next.js, Tailwind, Tracking Shield, CMS Headless',
+        edge: 'Copywriting estratégico + Tracking Shield avançado. Máquina de conversão.',
+      },
+      {
+        id: 'core-hub', name: 'Core Hub', price: 'R$ 2.497',
+        target: 'Empresas tradicionais que precisam de presença digital real',
+        arch: 'Site institucional com até 5 rotas',
+        tech: 'React/Next.js, Tailwind, CMS Headless, Vercel',
+        edge: 'O fim da síndrome de empresa de fundo de quintal. Presença que impõe respeito.',
+      },
+      {
+        id: 'scale-hub', name: 'Scale Hub', price: 'R$ 3.997',
+        target: 'Marcas premium e empresas em escala global',
+        arch: 'Plataforma multi-página escalável',
+        tech: 'Next.js, Node.js, PostgreSQL, AWS CloudFront',
+        edge: 'Infraestrutura enterprise com alta disponibilidade, CDN global e dashboard analítico.',
+      },
+      {
+        id: 'stealth-store', name: 'Stealth Store', price: 'R$ 2.497',
+        target: 'E-commerce de alta conversão (Shopify)',
+        arch: 'Loja virtual otimizada com checkout invisível',
+        tech: 'Shopify Plus, Liquid, Custom Checkout, Tracking Pixel',
+        edge: 'Operação silenciosa. Lucros ensurdecedores. Taxa de conversão agressiva.',
+      },
+      {
+        id: 'apps-ai', name: 'Apps & A.I', price: 'Consulting',
+        target: 'Operações complexas que exigem tecnologia sob medida',
+        arch: 'Aplicações web/mobile + sistemas de I.A.',
+        tech: 'React Native, Node.js, Python, TensorFlow, LLMs',
+        edge: 'A vantagem desleal em forma de código. Automação inteligente do seu negócio.',
+      },
+      {
+        id: 'seo-foundation', name: 'SEO Foundation', price: 'R$ 297',
+        target: 'Negócios que precisam de visibilidade orgânica real',
+        arch: 'Auditoria técnica + implementação de SEO on-page',
+        tech: 'Google Analytics, Search Console, Schema.org, Lighthouse',
+        edge: 'SEO técnico que realmente funciona. Sem promessas vazias, apenas resultados.',
+      },
+      {
+        id: 'security-pack', name: 'Security Pack', price: 'R$ 397',
+        target: 'Empresas que lidam com dados sensíveis e precisam de proteção',
+        arch: 'Camada de segurança completa para seu ativo digital',
+        tech: 'SSL Enterprise, Cloudflare WAF, LGPD Compliance, DDoS Protection',
+        edge: 'Blindagem digital contra vazamentos e ataques. Seus dados blindados 24/7.',
+      },
+      {
+        id: 'standard-protocol', name: 'Standard Protocol', price: 'R$ 77/mês',
+        target: 'Manutenção essencial para seu site ou loja',
+        arch: 'Monitoramento básico + backups semanais + updates de segurança',
+        tech: 'Uptime Robot, GitHub Actions, Vercel, backups automáticos',
+        edge: 'Suporte técnico em até 48h úteis. Tranquilidade por menos de R$ 3 por dia.',
+      },
+      {
+        id: 'priority-protocol', name: 'Priority Protocol', price: 'R$ 147/mês',
+        target: 'Operações críticas que não podem parar',
+        arch: 'Monitoramento avançado + suporte prioritário + SLA agressivo',
+        tech: 'Datadog, Sentry, AWS CloudWatch, PagerDuty',
+        edge: 'Suporte técnico em até 2h úteis com SLA. Tempo é dinheiro, e a gente sabe disso.',
+      },
+    ];
+
+    // ===== SHOP DATA =====
+    const shopData = [
+      { id:'camiseta-01', name:'Camiseta 01', emoji:'👕', desc:'Dev4Fun Edition', price:'R$ 89' },
+      { id:'camiseta-02', name:'Camiseta 02', emoji:'👕', desc:'Full Stack Lab', price:'R$ 89' },
+      { id:'bone-01', name:'Boné 01', emoji:'🧢', desc:'Dev4Fun', price:'R$ 69' },
+      { id:'bone-02', name:'Boné 02', emoji:'🧢', desc:'👾 Edition', price:'R$ 69' },
+      { id:'caneca', name:'Caneca', emoji:'☕', desc:'Dev4Fun', price:'R$ 49' },
+      { id:'mousepad', name:'Mousepad Gamer', emoji:'🖱️', desc:'2 desenhos', price:'R$ 59' },
+    ];
+
+    // ===== DOM REFS =====
+    const leftPanel = document.getElementById('panel-left');
+    const elTerminal = document.getElementById('terminal');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const modalOverlay = document.getElementById('main-modal');
+    const modalBody = document.getElementById('modal-body');
+    let currentState = 'home';
+    let isTyping = false;
+    let typeTimer = null;
+
+    // ===== TERMINAL SCRIPTS =====
+    const terminalScripts = {
+      home: [
+        { text:'Booting Dev4Fun Kernel...', speed:25 },
+        { text:'> root@dev4fun:~# bypassing limits...', speed:20 },
+        { text:'> loading cash.exe...', speed:30 },
+        { text:'> loading cash.exe... OK', speed:20 },
+        { text:'> initiating protocol...', speed:25 },
+        { text:'> System Ready.', speed:20 },
+        { text:'', speed:1, delay:150 },
+        { text:'▌', speed:1, isCursor:true },
+      ],
+      about: [
+        { text:'> analyzing dev4fun dna...', speed:22 },
+        { text:'', speed:1, delay:120 },
+        { text:'  speed: 72h throughput detected', speed:18 },
+        { text:'  efficiency: maximum', speed:18 },
+        { text:'  capability matrix: [████████░░] 80%', speed:18 },
+        { text:'  stack: polyglot', speed:18 },
+        { text:'', speed:1, delay:100 },
+        { text:'> system integrity: nominal', speed:22 },
+        { text:'▌', speed:1, isCursor:true },
+      ],
+      tiers: [
+        { text:'> deploying infrastructure...', speed:25 },
+        { text:'> routing to secure checkout...', speed:22 },
+        { text:'> verifying encryption protocols...', speed:20 },
+        { text:'> transaction gateway: open', speed:18 },
+        { text:'> scanning blockchain...', speed:25 },
+        { text:'  [████████░░░░] 6 nodes active', speed:15 },
+        { text:'', speed:1, delay:100 },
+        { text:'> ready for deployment.', speed:20 },
+        { text:'▌', speed:1, isCursor:true },
+      ],
+      shop: [
+        { text:'> checking merch stock...', speed:22 },
+        { text:'  camiseta 01: in stock', speed:18 },
+        { text:'  camiseta 02: in stock', speed:18 },
+        { text:'  bone 01: in stock', speed:18 },
+        { text:'  caneca: in stock', speed:18 },
+        { text:'  mousepad: in stock', speed:18 },
+        { text:'', speed:1, delay:100 },
+        { text:'> initializing payment gateway...', speed:20 },
+        { text:'> gateway: connected', speed:18 },
+        { text:'▌', speed:1, isCursor:true },
+      ],
+      media4fun: [
+        { text:'> connecting to neural feed...', speed:25 },
+        { text:'> scraping global headlines...', speed:30 },
+        { text:'> indexing 142 sources...', speed:22 },
+        { text:'  [████████░░░░░░] 52% indexed', speed:15 },
+        { text:'', speed:1, delay:150 },
+        { text:'> streaming real-time...', speed:20 },
+        { text:'  [LIVE] feed active — 0 latency', speed:18 },
+        { text:'▌', speed:1, isCursor:true },
+      ],
+      contato: [
+        { text:'> Establishing secure tunnel to Dev4Fun HQ...', speed:25 },
+        { text:'> encrypting channel...', speed:20 },
+        { text:'  [████████████] 100%', speed:15 },
+        { text:'', speed:1, delay:80 },
+        { text:'> [COMMUNICATION PROTOCOL ACTIVE]', speed:22 },
+        { text:'> Ready to receive input.', speed:20 },
+        { text:'▌', speed:1, isCursor:true },
+      ],
+    };
+
+    // ===== TYPEWRITER =====
+    function typeLines(lines, container, cb) {
+      container.innerHTML = '';
+      if (typeTimer) { clearTimeout(typeTimer); typeTimer = null; }
+      isTyping = true;
+      let li = 0, ci = 0, el = null;
+      function next() {
+        if (li >= lines.length) { isTyping = false; if (cb) cb(); return; }
+        const line = lines[li];
+        if (line.isCursor) {
+          el = document.createElement('div');
+          el.className = 'terminal-line terminal-cursor';
+          el.textContent = '';
+          container.appendChild(el);
+          li++;
+          typeTimer = setTimeout(next, line.delay || 50);
+          return;
+        }
+        if (line.text === '') {
+          el = document.createElement('div');
+          el.className = 'terminal-line';
+          el.innerHTML = '&nbsp;';
+          container.appendChild(el);
+          li++;
+          typeTimer = setTimeout(next, line.delay || 50);
+          return;
+        }
+        el = document.createElement('div');
+        el.className = 'terminal-line';
+        container.appendChild(el);
+        const txt = line.text, spd = line.speed || 25;
+        ci = 0;
+        function char() {
+          if (ci < txt.length) { el.textContent += txt[ci]; ci++; typeTimer = setTimeout(char, spd); }
+          else { li++; typeTimer = setTimeout(next, line.delay || 50); }
+        }
+        typeTimer = setTimeout(char, line.delay || 50);
+      }
+      next();
+    }
+
+    // ===== LEFT PANEL RENDERERS =====
+    function renderHome() {
+      leftPanel.innerHTML = `
+        <div class="kicker">WEB AND MOBILE A.I SYSTEMS FOR HIGH-TICKET PLAYERS</div>
+        <h1 class="hero-title">Forget the hype.<br>We code for cash. 🏴</h1>
+        <p class="hero-sub">Nós não vendemos sites. Nós implementamos infraestruturas digitais de conversão.</p>
+        <a href="http://api.whatsapp.com/send?1=pt_BR&phone=5513996500270" target="_blank" rel="noopener noreferrer" class="cta-primary">Apply for a Project <span>→</span></a>
+      `;
+    }
+
+    function renderAbout() {
+      leftPanel.innerHTML = `
+        <div class="kicker">CULTURE</div>
+        <h1 class="hero-title">O Assalto à<br>Luz do Dia</h1>
+        <div class="about-text">
+          <strong>NINGUÉM FAZ O QUE NÓS FAZEMOS, DO JEITO QUE NÓS FAZEMOS.</strong><br><br>
+          Esqueça as agências tradicionais e o corporativismo barato. A Dev4Fun é um laboratório de engenharia digital, focado em alcance e conversão. Unimos programação de alta performance, branding estratégico e posicionamento agressivo, através de infraestruturas de I.A escaláveis, que transformam o seu negócio em um rolo compressor que amassa os concorrentes.<br><br>
+          Nosso modelo de negócios é um assalto à luz do dia: Cobramos uma fortuna pelo nosso código, sequestramos a sua operação ineficiente e devolvemos uma máquina de liquidez imediata. No final, você paga rindo e pede mais! Sem reuniões idiotas, sem romantismo, zero burocracia. Forget the hype. We code for cash.
+        </div>
+        <div class="skills-cloud">
+          <span class="skill-pill">⚡ High-End Dev</span>
+          <span class="skill-pill">🎯 UI/UX de Conversão</span>
+          <span class="skill-pill">✍️ Direct Response Copywriting</span>
+          <span class="skill-pill">🛡️ Tracking Shield</span>
+          <span class="skill-pill">🤖 Automação I.A.</span>
+        </div>
+      `;
+    }
+
+    function renderTiers() {
+      let html = `<div class="kicker">PRODUCTS</div><h1 class="hero-title">Infraestruturas<br>de Conversão</h1><p class="hero-sub">Escolha seu armamento digital.</p><div class="tiers-grid">`;
+      products.forEach((p, idx) => {
+        html += `<div class="tier-balloon" onclick="openProductModal(${idx})">
+          <div class="tier-balloon-name">${p.name}</div>
+          <div class="tier-balloon-price">${p.price}</div>
+        </div>`;
+      });
+      html += `</div>`;
+      leftPanel.innerHTML = html;
+    }
+
+    function renderShop() {
+      let html = `<div class="kicker">MERCH</div><h1 class="hero-title">Dev4Fun<br>Merch</h1><p class="hero-sub">Vista o caos.</p><div class="shop-grid">`;
+      shopData.forEach(p => {
+        html += `<div class="shop-card" onclick="openShopModal('${p.id}','${p.name}','${p.emoji}','${p.desc}','${p.price}')">
+          <div class="shop-card-icon">${p.emoji}</div>
+          <div class="shop-card-name">${p.name}</div>
+          <div class="shop-card-price">${p.price}</div>
+        </div>`;
+      });
+      html += `</div>`;
+      leftPanel.innerHTML = html;
+    }
+
+    function renderMedia4Fun() {
+      leftPanel.innerHTML = `
+        <div class="kicker">BLOG</div>
+        <h1 class="hero-title">Media4Fun:<br>News Engine</h1>
+        <p class="hero-sub">O Media4Fun é um ecossistema de mídia digital construído para operar de forma autônoma, onde todo o processo editorial é conduzido por agentes inteligentes especializados em diferentes áreas da informação.<br><br>
+Cada "jornalista" atua como uma persona editorial independente, responsável por monitorar fontes globais, selecionar acontecimentos relevantes, reinterpretar o conteúdo e transformá-lo em narrativas otimizadas para leitura rápida e distribuição em redes sociais.<br><br>
+O resultado é um portal que funciona em alta frequência, com cobertura contínua de tecnologia, esportes e geopolítica, operando sem dependência de uma redação tradicional.</p>
+        <a href="https://www.instagram.com/media4fun.ai" target="_blank" rel="noopener noreferrer" class="cta-primary">Explorar o Media4Fun <span>→</span></a>
+      `;
+    }
+
+    function renderContato() {
+      leftPanel.innerHTML = `
+        <div class="kicker">SECURE COMMS</div>
+        <h1 class="hero-title">O Fim da<br>Burocracia.</h1>
+        <p class="hero-sub">O tempo passa. Seu concorrente lucra. Não perca tempo preenchendo formulários idiotas de agências que demoram 3 dias para responder um e-mail. Fale diretamente com a engenharia e coloque o seu projeto na rua.</p>
+        <div style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;font-weight:600;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF2A2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:+5513996500270" style="color:#000;text-decoration:none;">+55 13 99650-0270</a>
+          </div>
+          <div style="display:flex;align-items:center;gap:0.5rem;font-size:0.75rem;font-weight:600;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF2A2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:contato@dev4fun.online" style="color:#000;text-decoration:none;">contato@dev4fun.online</a>
+          </div>
+        </div>
+        <a href="http://api.whatsapp.com/send?1=pt_BR&phone=5513996500270" target="_blank" rel="noopener noreferrer" class="buy-btn buy-btn--giant">Iniciar Assalto (WhatsApp) →</a>
+      `;
+    }
+
+    const renderers = { home: renderHome, about: renderAbout, tiers: renderTiers, shop: renderShop, media4fun: renderMedia4Fun, contato: renderContato };
+
+    // ===== STATE SWITCH =====
+    function switchState(state) {
+      if (state === currentState) return;
+      if (isTyping) { clearTimeout(typeTimer); typeTimer = null; isTyping = false; }
+      navLinks.forEach(l => l.classList.toggle('active', l.dataset.state === state));
+      currentState = state;
+      if (renderers[state]) renderers[state]();
+      const script = terminalScripts[state];
+      if (script && script.length) typeLines(script, elTerminal, () => {});
+      closeModal();
+    }
+
+    // ===== PRODUCT MODAL (GIANT) =====
+    function openProductModal(idx) {
+      const p = products[idx];
+      if (!p) return;
+      let html = `
+        <div style="text-align:left;">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;color:#FF2A2A;letter-spacing:0.08em;margin-bottom:0.5rem;">PRODUTO ${String(idx+1).padStart(2,'0')}</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;line-height:1.1;">${p.name}</h2>
+            <span style="font-size:1.3rem;font-weight:800;color:#FF2A2A;white-space:nowrap;">${p.price}</span>
+          </div>
+      `;
+      if (p.target) html += `<p class="modal-label">Target</p><p class="modal-value">${p.target}</p>`;
+      if (p.arch) html += `<p class="modal-label">Arquitetura</p><p class="modal-value">${p.arch}</p>`;
+      if (p.tech) html += `<p class="modal-label">Tech Stack</p><p class="modal-value">${p.tech}</p>`;
+      if (p.edge) html += `<p class="modal-label">Dev4Fun EDGE</p><p class="modal-value">${p.edge}</p>`;
+      html += `
+          <div style="margin-top:1rem;border-top:1px solid rgba(0,0,0,0.06);padding-top:1rem;">
+            <a href="http://api.whatsapp.com/send?1=pt_BR&phone=5513996500270" target="_blank" rel="noopener noreferrer" class="buy-btn buy-btn--giant">Solicitar Projeto →</a>
+          </div>
+        </div>
+      `;
+      modalBody.classList.add('modal-card--giant');
+      modalBody.innerHTML = html;
+      modalOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // ===== SHOP MODAL =====
+    function openShopModal(id, name, emoji, desc, price) {
+      let html = `<div style="text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:0.3rem;">${emoji}</div>
+        <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:0.2rem;">${name}</h3>
+        <p style="font-size:0.7rem;color:rgba(0,0,0,0.35);margin-bottom:0.8rem;">${desc} — ${price}</p>
+        <div style="display:flex;gap:0.4rem;justify-content:center;margin-bottom:0.8rem;">
+          <button class="var-btn active" data-var="white" onclick="selectVar(this)">Branco</button>
+          <button class="var-btn" data-var="black" onclick="selectVar(this)">Preto</button>
+        </div>
+        <button class="buy-btn" data-product-id="${id}" onclick="handleShopBuy(this)">Comprar Agora</button>
+      </div>`;
+      modalBody.classList.remove('modal-card--giant');
+      modalBody.innerHTML = html;
+      modalOverlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // ===== MODAL CONTROL =====
+    function closeModal() {
+      modalOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    modalOverlay.addEventListener('click', e => { if (e.target === modalOverlay) closeModal(); });
+
+    function selectVar(el) {
+      document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+    function handleShopBuy(btn) {
+      const variation = document.querySelector('.var-btn.active')?.dataset.var || 'white';
+      const name = modalBody.querySelector('h3')?.textContent || '';
+      alert(`🛒 Pedido: ${name}\nVariação: ${variation}\n\n(Simulação — API externa será integrada.)`);
+      closeModal();
+    }
+
+    // ===== MOBILE NAV =====
+    function toggleMobileNav() { document.getElementById('main-nav').classList.toggle('open'); }
+    function closeMobileNav() { document.getElementById('main-nav').classList.remove('open'); }
+
+    // ===== NAV CLICKS =====
+    navLinks.forEach(btn => {
+      btn.addEventListener('click', () => { switchState(btn.dataset.state); closeMobileNav(); });
+    });
+
+    // ===== LOGO FALLBACK =====
+    document.querySelectorAll('.marquee-content img').forEach(img => {
+      img.addEventListener('error', function() {
+        this.style.display = 'none';
+        const fb = document.createElement('span');
+        fb.className = 'marquee-fallback';
+        try { fb.textContent = new URL(this.closest('a')?.href || '').hostname.replace('www.','').split('.')[0].toUpperCase(); }
+        catch { fb.textContent = '?'; }
+        this.parentElement?.appendChild(fb);
+      });
+    });
+
+    // ===== KEYBOARD =====
+    document.addEventListener('keydown', e => {
+      const order = ['home', 'about', 'tiers', 'shop', 'media4fun', 'contato'];
+      const idx = order.indexOf(currentState);
+      if (e.key === 'ArrowRight' && idx < order.length - 1) switchState(order[idx + 1]);
+      if (e.key === 'ArrowLeft' && idx > 0) switchState(order[idx - 1]);
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // ===== INIT =====
+    renderHome();
+    typeLines(terminalScripts.home, elTerminal, () => {});
+    console.log('🚀 Dev4Fun — fine-tuned.');
+  </script>
+</body>
+</html>
