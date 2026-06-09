@@ -872,6 +872,7 @@
 
     function renderCulture() {
       leftPanel.innerHTML = `
+        <div class="py-12 my-auto">
         <div class="kicker">DNA</div>
         <h1 class="hero-title">O Conceito:<br>Code for Cash, Not for Fun</h1>
         <div class="about-text">
@@ -891,6 +892,7 @@
           <span class="skill-pill" style="font-size:0.6rem;">🤖 Automação de Processos (IA) — tarefas de 8h em 5 minutos</span>
           <span class="skill-pill" style="font-size:0.6rem;">🎯 Arquitetura de Conversão — máquina de capturar leads e fechar vendas</span>
         </div>
+        </div>
       `;
     }
 
@@ -909,7 +911,7 @@
     }
 
     function renderTiers() {
-      let html = `<div class="kicker">PRODUCTS</div><h1 class="hero-title">PRODUCTS</h1><p class="hero-sub">Escolha seu armamento digital.</p><div class="tiers-grid">`;
+      let html = `<div class="kicker">TIERS</div><h1 class="hero-title">PRODUCTS</h1><p class="hero-sub">Escolha seu armamento digital.</p><div class="tiers-grid">`;
       products.forEach((p, idx) => {
         html += `<div class="tier-balloon" onclick="openProductModal(${idx})">
           <div class="tier-balloon-name">${p.name}</div>
@@ -935,7 +937,7 @@
 
     function renderMedia4Fun() {
       leftPanel.innerHTML = `
-        <div class="kicker">BLOG</div>
+        <div class="kicker">NEWSROOM</div>
         <h1 class="hero-title">Media4Fun:<br>News Engine</h1>
         <p class="hero-sub">O Media4Fun é um ecossistema de mídia digital construído para operar de forma autônoma, onde todo o processo editorial é conduzido por agentes inteligentes especializados em diferentes áreas da informação.<br><br>
 Cada "jornalista" atua como uma persona editorial independente, responsável por monitorar fontes globais, selecionar acontecimentos relevantes, reinterpretar o conteúdo e transformá-lo em narrativas otimizadas para leitura rápida e distribuição em redes sociais.<br><br>
