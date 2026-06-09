@@ -523,7 +523,7 @@
     <nav class="nav-desktop" id="main-nav">
       <a class="nav-link active" data-state="home">Home</a>
       <a class="nav-link" data-state="about">About</a>
-      <a class="nav-link" data-state="tiers">Tiers</a>
+      <a class="nav-link" data-state="tiers">Products</a>
       <a class="nav-link" data-state="shop">Shop</a>
       <a class="nav-link" data-state="media4fun">Blog</a>
       <a class="nav-link" data-state="contato">Contato</a>
@@ -844,7 +844,7 @@
       leftPanel.innerHTML = `
         <div class="kicker">WEB AND MOBILE A.I SYSTEMS FOR HIGH-TICKET PLAYERS</div>
         <h1 class="hero-title">Forget the hype.<br>We code for cash. 🏴</h1>
-        <p class="hero-sub">Nós não vendemos sites. Nós implementamos infraestruturas digitais de conversão.</p>
+        <p class="hero-sub">Nós não fazemos front-end fofinho. Nós hackeamos operações ineficientes e devolvemos uma máquina de imprimir dinheiro.</p>
         <a href="http://api.whatsapp.com/send?1=pt_BR&phone=5513996500270" target="_blank" rel="noopener noreferrer" class="cta-primary">Apply for a Project <span>→</span></a>
       `;
     }
@@ -869,7 +869,7 @@
     }
 
     function renderTiers() {
-      let html = `<div class="kicker">PRODUCTS</div><h1 class="hero-title">Infraestruturas<br>de Conversão</h1><p class="hero-sub">Escolha seu armamento digital.</p><div class="tiers-grid">`;
+      let html = `<div class="kicker">PRODUCTS</div><h1 class="hero-title">PRODUCTS</h1><p class="hero-sub">Escolha seu armamento digital.</p><div class="tiers-grid">`;
       products.forEach((p, idx) => {
         html += `<div class="tier-balloon" onclick="openProductModal(${idx})">
           <div class="tier-balloon-name">${p.name}</div>
@@ -881,7 +881,7 @@
     }
 
     function renderShop() {
-      let html = `<div class="kicker">MERCH</div><h1 class="hero-title">Dev4Fun<br>Merch</h1><p class="hero-sub">Vista o caos.</p><div class="shop-grid">`;
+      let html = `<div class="kicker">MERCH</div><h1 class="hero-title">SHOP</h1><p class="hero-sub">Vista o caos.</p><div class="shop-grid">`;
       shopData.forEach(p => {
         html += `<div class="shop-card" onclick="openShopModal('${p.id}','${p.name}','${p.emoji}','${p.desc}','${p.price}')">
           <div class="shop-card-icon">${p.emoji}</div>
