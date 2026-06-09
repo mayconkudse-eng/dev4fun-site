@@ -952,6 +952,74 @@ O resultado é um portal que funciona em alta frequência, com cobertura contín
       `;
     }
 
+    // ===== PRODUCT MODAL =====
+    function openProductModal(idx) {
+      const p = products[idx];
+      if (!p) return;
+      let html = `
+        <div style="text-align:left;">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;color:#FF2A2A;letter-spacing:0.08em;margin-bottom:0.5rem;">PRODUTO ${String(idx+1).padStart(2,'0')}</p>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;line-height:1.1;">${p.name}</h2>
+            <span style="font-size:1.3rem;font-weight:800;color:#FF2A2A;white-space:nowrap;">${p.price}</span>
+          </div>
+      `;
+      if (p.target) html += `<p class="modal-label">Target</p><p class="modal-value">${p.target}</p>`;
+      if (p.arch) html += `<p class="modal-label">Arquitetura</p><p class="modal-value">${p.arch}</p>`;
+      if (p.tech) html += `<p class="modal-label">Tech Stack</p><p class="modal-value">${p.tech}</p>`;
+      if (p.edge) html += `<p class="modal-label">Dev4Fun EDGE</p><p class="modal-value">${p.edge}</p>`;
+      html += `
+          <div style="margin-top:1rem;border-top:1px solid rgba(0,0,0,0.06);padding-top:1rem;">
+            <a href="http://api.whatsapp.com/send?1=pt_BR&phone=5513996500270" target="_blank" rel="noopener noreferrer" class="buy-btn buy-btn--giant">Solicitar Projeto →</a>
+          </div>
+        </div>
+      `;
+      const modalBody = document.getElementById('modal-body');
+      modalBody.classList.add('modal-card--giant');
+      modalBody.innerHTML = html;
+      document.getElementById('main-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // ===== SHOP MODAL =====
+    function openShopModal(id, name, emoji, desc, price) {
+      let html = `<div style="text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:0.3rem;">${emoji}</div>
+        <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:0.2rem;">${name}</h3>
+        <p style="font-size:0.7rem;color:rgba(0,0,0,0.35);margin-bottom:0.8rem;">${desc} — ${price}</p>
+        <div style="display:flex;gap:0.4rem;justify-content:center;margin-bottom:0.8rem;">
+          <button class="var-btn active" data-var="white" onclick="selectVar(this)">Branco</button>
+          <button class="var-btn" data-var="black" onclick="selectVar(this)">Preto</button>
+        </div>
+        <button class="buy-btn" data-product-id="${id}" onclick="handleShopBuy(this)">Comprar Agora</button>
+      </div>`;
+      const modalBody = document.getElementById('modal-body');
+      modalBody.classList.remove('modal-card--giant');
+      modalBody.innerHTML = html;
+      document.getElementById('main-modal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    // ===== MODAL CONTROL =====
+    function closeModal() {
+      document.getElementById('main-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    document.getElementById('main-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('main-modal')) closeModal();
+    });
+
+    function selectVar(el) {
+      document.querySelectorAll('.var-btn').forEach(b => b.classList.remove('active'));
+      el.classList.add('active');
+    }
+    function handleShopBuy(btn) {
+      const variation = document.querySelector('.var-btn.active')?.dataset.var || 'white';
+      const name = document.querySelector('#modal-body h3')?.textContent || '';
+      alert(`🛒 Pedido: ${name}\nVariação: ${variation}\n\n(Simulação — API externa será integrada.)`);
+      closeModal();
+    }
+
     const renderers = { home: renderHome, about: renderAbout, culture: renderCulture, skills: renderSkills, tiers: renderTiers, shop: renderShop, media4fun: renderMedia4Fun, contato: renderContato };
 
     // ===== STATE SWITCH =====
